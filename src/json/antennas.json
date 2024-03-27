@@ -1,0 +1,27 @@
+[
+  {
+    "id" : 0,
+    "name" : "Communotron 16",
+    "power" : 500000
+  },
+  {
+    "id" : 1,
+    "name" : "Communotron 16S",
+    "power" : 500000
+  },
+  {
+    "id" : 2,
+    "name" : "Communotron DTS-M1",
+    "power" : 2000000000
+  },
+  {
+    "id" : 3,
+    "name" : "Communotron HG-55",
+    "power" : 15000000000
+  },
+  {
+    "id" : 4,
+    "name" : "Communotron 88-88",
+    "power" : 100000000000
+  }
+]
