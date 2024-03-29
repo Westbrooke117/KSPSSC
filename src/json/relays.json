@@ -1,0 +1,22 @@
+[
+  {
+    "id" : 0,
+    "name" : "HG-5 High Gain Antenna",
+    "power" : 5000000
+  },
+  {
+    "id" : 1,
+    "name" : "RA-2 Relay Antenna",
+    "power" : 2000000000
+  },
+  {
+    "id" : 2,
+    "name" : "RA-15 Relay Antenna",
+    "power" : 15000000000
+  },
+  {
+    "id" : 3,
+    "name" : "RA-100 Relay Antenna",
+    "power" : 100000000000
+  }
+]

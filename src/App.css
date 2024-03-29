@@ -21,9 +21,45 @@ body {
     padding: 0;
 }
 
-.signal-mode-selection {
+.signal-mode-selection-container {
     display: flex;
     justify-content: center;
+    flex-direction: row;
+}
+
+.signal-mode-selection {
+    background: none;
+    color: white;
+    border: none;
+    font-size: 16px;
+}
+
+.signal-mode-selection:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.signal-mode-wrapper {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #8A8A8A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vertical-divider {
+    width: 1px;
+    background-color: white;
+    height: 100%;
+}
+
+body {
+    background-color: black;
+}
+
+.active-button {
+    color: #52ACFF;
 }
 
 .planet-container {
@@ -34,18 +70,6 @@ body {
     justify-content: center;
     margin-top: 20px;
     margin-bottom: 20px;
-}
-
-.planet-container-wrapper {
-    display: grid;
-}
-
-.planet-container, .container-overlay {
-    grid-area: 1/1;
-}
-
-.container-overlay:hover {
-    backdrop-filter: blur(3px);
 }
 
 .main-content-container {
@@ -86,9 +110,11 @@ body {
     border: 1px solid gray;
     width: 1150px;
     display: flex;
+    padding-bottom: 10px;
     justify-content: space-around;
     border-radius: 25px;
     backdrop-filter: blur(3px);
+    margin-bottom: 50px;
 }
 
 .settings-column {
@@ -103,17 +129,114 @@ body {
 }
 
 .button-active {
-    border: 2px solid #52ACFF !important;
+    border: 2px solid #4F92D0 !important;
     border-radius: 10px;
 }
 
-.settings-column > button, select {
-    width: 300px;
-    height: 50px;
-    text-align: center;
-    margin-bottom: 20px;
+.styled-div {
+    width: 258px;
+    height: 58px;
+    text-align: left;
+    margin-bottom: 10px;
     border: 1px solid #676767;
     border-radius: 10px;
     background-color: #1F1F1F;
     color: white;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.styled-button-alt {
+    width: 300px;
+    height: 60px;
+    text-align: center;
+    margin-bottom: 10px;
+    border: 1px solid #676767;
+    border-radius: 10px;
+    background-color: #1F1F1F;
+    color: white;
+    cursor: pointer ;
+    font-size: 16px;
+}
+
+.styled-button-alt:hover {
+    background-color: #434343;
+    border: 1px solid #757575;
+}
+
+.delete-button {
+    height: 60px;
+    background-color: #9F2C2C;
+    border: 1px solid #D76F6F;
+    color: white;
+    border-radius: 10px;
+    width: 30px;
+    cursor: pointer;
+}
+
+.delete-button:hover {
+    background-color: #BB4E4E;
+    border: 1px solid #DB7C7C;
+}
+
+.icon-container {
+    width: 40px;
+    height: 40px;
+    background-color: #676767;
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon {
+    justify-content: center;
+    max-width: 35px;
+    max-height: 35px;
+    aspect-ratio: auto;
+}
+
+.footer {
+    text-align: left;
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    left: 10px;
+    bottom: 0;
+    width: 100%;
+    font-size: 12px;
+    color: #676767;
+    z-index: -1;
+}
+
+.version-text {
+    padding-right: 20px;
+}
+
+.menu-item:hover {
+    background-color: #424242;
+    border-radius: 5px;
+}
+
+.planet-select {
+    background-color: #1f1f1f;
+    color: white;
+    border: 1px solid #424242;
+    font-size: 16px;
+    border-radius: 5px;
+    text-align: center;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.component-name {
+    white-space: nowrap;
+    overflow: hidden;
+    width: 200px;
+    text-overflow: ellipsis;
 }
