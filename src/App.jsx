@@ -161,7 +161,7 @@ const App = () => {
           </div>
       </div>
       <div className={"main-content-container"}>
-          <div className={"planet-container"} style={{backgroundImage: 'url(src/assets/kerbol_system/Kerbin.webp)', backgroundSize: 'cover'}}>
+          <div className={"planet-container"} style={{backgroundImage: 'url(src/assets/kerbol_system/kerbin.webp)', backgroundSize: 'cover'}}>
               <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}}>
                   <option>Kerbin</option>
               </select>
@@ -186,7 +186,7 @@ const App = () => {
               }
           </Box>
         </div>
-        <div className={"planet-container"} style={{backgroundImage: `url(src/assets/kerbol_system/${distanceData[endingDestination].name}.webp)`, backgroundSize: 'cover'}}>
+        <div className={"planet-container"} style={{backgroundImage: `url(src/assets/kerbol_system/${(distanceData[endingDestination].name).toLowerCase()}.webp)`, backgroundSize: 'cover'}}>
           <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}} defaultValue={3} onChange={(e) => setEndingDestination(parseInt(e.target.value))}>
             {
               distanceData.map(planet => (
