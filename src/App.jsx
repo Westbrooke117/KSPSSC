@@ -2,20 +2,19 @@ import './App.css'
 import distanceData from "./json/distances.json"
 import antennaData from './json/antennas.json'
 import relayData from './json/relays.json'
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {
+    Box,
     Menu,
     MenuButton,
     MenuDivider,
     MenuGroup,
     MenuItem,
     MenuList,
-    Popover,
-    PopoverContent,
-    PopoverTrigger
+    Text
 } from "@chakra-ui/react";
-import { MenuIcon} from "./components/MenuIcon.jsx";
-import {DeleteIcon} from "@chakra-ui/icons";
+import {DeleteIcon, SmallAddIcon} from "@chakra-ui/icons";
+import {CustomModal} from "./components/CustomModal.jsx";
 
 const App = () => {
     const [totalPower, setTotalPower] = useState(2000000000)
@@ -24,21 +23,30 @@ const App = () => {
     const [antennas, updateAntennas] = useState([])
     const [relays, updateRelays] = useState([])
 
-    const [destination, setDestination] = useState(3)
+    const [endingDestination, setEndingDestination] = useState(3)
+
     const [minStrength, setMinStrength] = useState(0)
     const [maxStrength, setMaxStrength] = useState(0)
 
     const [activeSignalType, setActiveSignalType] = useState('Antenna')
 
-    const relaySelect = useRef()
-    const antennaSelect = useRef()
+    const [customAntennaModalActive, toggleAntennaModal] = useState(false)
+    const [customRelayModalActive, toggleRelayModal] = useState(false)
 
     const [itemId, setItemId] = useState(0)
 
     useEffect(() => {
+
+        if (antennas.length === 0 && relays.length > 0){
+            setActiveSignalType('Relay')
+        }
+        if (relays.length === 0 && antennas.length > 0){
+            setActiveSignalType('Antenna')
+        }
+
         const calculateSignalStrength = (distance) => {
             console.log(antennas)
-            let x = Math.min(1 - distanceData[destination][distance] / Math.round(Math.sqrt(dsnLevel * (activeSignalType === 'Relay' ? calculateTotalPower().relayTotal : calculateTotalPower().antennaTotal))), 1)
+            let x = Math.min(1 - distanceData[endingDestination][distance] / Math.round(Math.sqrt(dsnLevel * (activeSignalType === 'Relay' ? calculateTotalPower().relayTotal : calculateTotalPower().antennaTotal))), 1)
             x = Math.max(x, 0)
 
             return Math.round(((3-2 * x) * x ** 2) * 100)
@@ -48,18 +56,15 @@ const App = () => {
         setMaxStrength(calculateSignalStrength('max'))
 
         setTotalPower(Math.floor(Math.sqrt(dsnLevel * (activeSignalType === 'Relay' ? calculateTotalPower().relayTotal : calculateTotalPower().antennaTotal))))
-  },[dsnLevel, antennas, relays, destination, activeSignalType])
+  },[dsnLevel, antennas, relays, endingDestination, activeSignalType])
 
     const generateShorthandNumber = (power) => {
-      if (power < 1000000){
-          return `${Math.floor(power/1000)}k`
-      }
-      if (power < 1000000000){
-            return `${Math.floor(power/1000000)}M`
-      }
-      else {
-          return `${Math.floor(power/1000000000).toFixed(2)}G`
-      }
+        if (power === 0 || isNaN(power)){ return `-` }
+        if (power < 1000){ return power }
+        if (power < 1000000){ return `${(power/1000).toFixed(2)}k` }              //A Thousand
+        if (power < 1000000000){ return `${(power/1000000).toFixed(2)}M` }        //A Million
+        if (power < 1000000000000){ return `${(power/1000000000).toFixed(2)}G` }  //A Billion
+        else { return `${(power/1000000000000).toFixed(2)}T` }                    //A Trillion and over
     }
 
     const calculateTotalPower = () => {
@@ -107,14 +112,46 @@ const App = () => {
         }
     }
 
+    const onClose = () => {
+        toggleAntennaModal(false)
+        toggleRelayModal(false)
+    }
+
+    const addCustom = (type, name, power) => {
+        setItemId(itemId + 1)
+
+        switch (type){
+            case 'antenna':
+                updateAntennas([
+                    ...antennas,
+                    {
+                        id: itemId,
+                        name: name,
+                        power: power
+                    }
+                ])
+                break;
+            case 'relay':
+                updateRelays([
+                    ...relays,
+                    {
+                        id: itemId,
+                        name: name,
+                        power: power
+                    }
+                ])
+                break;
+        }
+    }
+
   return (
-    <>
-      <div className={"title"}>
-        <p style={{color: "white", fontSize: 32}}>KSP Signal Strength Calculator</p>
-      </div>
+    <div>
+      <Box className={"title"} mt={10} mb={10}>
+        <Text style={{color: "white", fontSize: 32}}>KSP Signal Strength Calculator</Text>
+      </Box>
       <div className={"signal-mode-selection-container"}>
           <div className={'signal-mode-wrapper'}>
-              <button style={{marginRight: '10px'}} className={`signal-mode-selection ${activeSignalType === 'Antenna' ? 'active-button' : ''}`} onClick={() => setActiveSignalType('Antenna')}>Direct Mode</button>
+              <button style={{marginRight: '10px'}} className={`signal-mode-selection ${activeSignalType === 'Antenna' ? 'active-button' : ''}`} onClick={() => setActiveSignalType('Antenna')}>Antenna Mode</button>
               <div className={'vertical-divider'}></div>
               <button style={{marginLeft: '10px'}} className={`signal-mode-selection ${activeSignalType === 'Relay' ? 'active-button' : ''}`} onClick={() => setActiveSignalType('Relay')}>Relay Mode</button>
           </div>
@@ -122,29 +159,35 @@ const App = () => {
       <div className={"main-content-container"}>
           <div className={"planet-container"} style={{backgroundImage: 'url(src/assets/kerbol_system/Kerbin.webp)', backgroundSize: 'cover'}}>
               <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}}>
-                  <option>Kerbin</option>
+                  {
+                      distanceData.map(planet => (
+                          <option value={planet.id}>{planet.name}</option>
+                      ))
+                  }
               </select>
           </div>
         <div className={"connection-container"}>
-          <div style={{borderBottom: minStrength !== 0 ? `3px solid hsl(${minStrength}, 100%, 60%)` : `3px dotted white`, height: 35, width: 500}}>
-              {
-                  minStrength !== 0 ?
-                      <p className={"text-centered white"}>{minStrength}% strength at min distance</p>
-                      :
-                      <p className={"text-centered white"}>No connection at min distance</p>
-              }
-          </div>
-          <div style={{borderBottom: maxStrength !== 0 ? `3px solid hsl(${maxStrength}, 100%, 60%)` : `3px dotted white`, height: 35, width: 500, marginBottom: 35}}>
+          <Box mb={25} style={{borderBottom: minStrength !== 0 ? `3px solid hsl(${minStrength}, 100%, 60%)` : `3px dotted white`, height: 25, width: 500}}>
+              <Text className={"text-centered white"}>
+                  {
+                      minStrength !== 0 ?
+                          `${minStrength}% strength at min distance`
+                          :
+                          `No connection at max distance`
+                  }
+              </Text>
+          </Box>
+          <Box style={{borderBottom: maxStrength !== 0 ? `3px solid hsl(${maxStrength}, 100%, 60%)` : `3px dotted white`, height: 25, width: 500, marginBottom: 35}}>
               {
                   maxStrength !== 0 ?
-                      <p className={"text-centered white"}>{maxStrength}% strength at max distance</p>
+                      <Text className={"text-centered white"}>{maxStrength}% strength at max distance</Text>
                       :
-                      <p className={"text-centered white"}>No connection at max distance</p>
+                      <Text className={"text-centered white"}>No connection at max distance</Text>
               }
-          </div>
+          </Box>
         </div>
-        <div className={"planet-container"} style={{backgroundImage: `url(src/assets/kerbol_system/${distanceData[destination].name}.webp)`, backgroundSize: 'cover'}}>
-          <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}} defaultValue={3} onChange={(e) => setDestination(parseInt(e.target.value))}>
+        <div className={"planet-container"} style={{backgroundImage: `url(src/assets/kerbol_system/${distanceData[endingDestination].name}.webp)`, backgroundSize: 'cover'}}>
+          <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}} defaultValue={3} onChange={(e) => setEndingDestination(parseInt(e.target.value))}>
             {
               distanceData.map(planet => (
                   <option value={planet.id}>{planet.name}</option>
@@ -155,23 +198,26 @@ const App = () => {
       </div>
       <div className={"centered"}>
         <div className={"total-power"}>
-          <p>Total {activeSignalType} Power: {totalPower.toLocaleString()}</p>
+          <Text
+              p={2}
+          >Total {activeSignalType} Power: <span className={'power-readout'}>{totalPower.toLocaleString()}</span></Text>
         </div>
       </div>
       <div className={"centered"}>
         <div className={"settings-container"}>
           <div className={"settings-column"}>
-            <p className={"text-centered white"}>Tracking Station Level</p>
-            <button className={`${dsnLevel === 2000000000 ? "button-active" : "button-inactive"} styled-button-alt`} onClick={() => {setDsnLevel(2000000000)}}>Level 1<br/><span className={'power-readout'}>2.0G</span></button>
-            <button className={`${dsnLevel === 50000000000 ? "button-active" : "button-inactive"} styled-button-alt`} onClick={() => {setDsnLevel(50000000000)}}>Level 2<br/><span className={'power-readout'}>50.0G</span></button>
-            <button className={`${dsnLevel === 250000000000 ? "button-active" : "button-inactive"} styled-button-alt`} onClick={() => {setDsnLevel(250000000000)}}>Level 3<br/><span className={'power-readout'}>250.0G</span></button>
+            <Text mt={3} mb={3} className={"text-centered white"}>Tracking Station Level</Text>
+            <button className={`${dsnLevel === 2000000000 ? "button-active" : "button-inactive"} styled-button-alt`} onClick={() => {setDsnLevel(2000000000)}}>Level 1<br/><span className={'power-readout'}>2.00G</span></button>
+            <button className={`${dsnLevel === 50000000000 ? "button-active" : "button-inactive"} styled-button-alt`} onClick={() => {setDsnLevel(50000000000)}}>Level 2<br/><span className={'power-readout'}>50.00G</span></button>
+            <button className={`${dsnLevel === 250000000000 ? "button-active" : "button-inactive"} styled-button-alt`} onClick={() => {setDsnLevel(250000000000)}}>Level 3<br/><span className={'power-readout'}>250.00G</span></button>
           </div>
           <div className={"settings-column"}>
-            <p className={"text-centered white"}>Direct Antennas</p>
+            <Text mt={3} mb={3} className={"text-centered white"}>Direct Antennas</Text>
+              <CustomModal isOpen={customAntennaModalActive} onClose={onClose} addCustom={addCustom} toShorthand={generateShorthandNumber} signalType={'antenna'}/>
               <Menu flip={false}>
                   <MenuButton className={'styled-button-alt'}>--- Select ---</MenuButton>
-                  <MenuList border={'1px solid #676767'} borderRadius={10} w={'280px'} backgroundColor={'#1f1f1f'} padding={'10px'}>
-                      <MenuGroup title={'Stock'} mt={0} mb={10} color={'white'}>
+                  <MenuList border={'1px solid #676767'} borderRadius={10} w={'300px'} backgroundColor={'#1f1f1f'} padding={'10px'}>
+                      <MenuGroup>
                           { antennaData.map(antenna => <MenuItem
                               value={antenna.id}
                               background={'none'}
@@ -180,11 +226,25 @@ const App = () => {
                               cursor={'pointer'}
                               className={'menu-item'}
                               display={'flex'}
+                              p={1}
                               justifyContent={'space-between'}
-                              mt={5}
                               onClick={() => {HandleOptionClick('antenna', antenna.id)}}
                           >{antenna.name}<span className={'power-readout'}>{generateShorthandNumber(antenna.power)}</span></MenuItem>) }
                       </MenuGroup>
+                      <MenuDivider/>
+                      <MenuItem
+                          background={'none'}
+                          border={'none'}
+                          color={'white'}
+                          cursor={'pointer'}
+                          className={'menu-item'}
+                          display={'flex'}
+                          p={1}
+                          onClick={() => toggleAntennaModal(!customAntennaModalActive)}
+                      >
+                          <SmallAddIcon mr={2}/>
+                          Custom Antenna
+                      </MenuItem>
                   </MenuList>
               </Menu>
               {
@@ -192,9 +252,16 @@ const App = () => {
                       <div style={{display: 'flex', justifyContent: 'center'}}>
                           <div className={'styled-div'}>
                               <div className={'icon-container'}>
-                                  <img className={'icon'} src={`src/assets/communotrons/${antenna.name}.webp`}/>
+                                  <img
+                                      className={'icon'}
+                                      src={`src/assets/communotrons/${antenna.name}.webp`}
+                                      onError={({ currentTarget }) => {
+                                          currentTarget.onerror = null;
+                                          currentTarget.src="src/assets/nosrc.png";
+                                      }}
+                                  />
                               </div>
-                              <p>{antenna.name}<br/><span className={'power-readout'}>{generateShorthandNumber(antenna.power)}</span></p>
+                              <p className={'component-name'}>{antenna.name}<br/><span className={'power-readout'}>{generateShorthandNumber(antenna.power)}</span></p>
                           </div>
                           <button onClick={() => {
                               const idToRemove = antenna.id; // Extract the id for clarity
@@ -204,9 +271,9 @@ const App = () => {
                   )
               }
           </div>
-            {/*TODO: Use chakra UI menu component instead of select */}
             <div className={"settings-column"}>
-                <p className={"text-centered white"}>Relays</p>
+                <Text mb={3} mt={3} className={"text-centered white"}>Relays</Text>
+                <CustomModal isOpen={customRelayModalActive} onClose={onClose} addCustom={addCustom} toShorthand={generateShorthandNumber} signalType={'relay'}/>
                 <Menu flip={false} onChange={(e) => {
                     let id = e.target.value
                     updateRelays(
@@ -220,8 +287,8 @@ const App = () => {
                     )
                 }}>
                     <MenuButton cursor={'pointer'} className={'styled-button-alt'}>--- Select ---</MenuButton>
-                    <MenuList border={'1px solid #676767'} borderRadius={10} w={'280px'} backgroundColor={'#1f1f1f'} padding={'10px'}>
-                        <MenuGroup mt={0} mb={10} title={'Stock'} color={'white'}>
+                    <MenuList border={'1px solid #676767'} borderRadius={10} w={'300px'} backgroundColor={'#1f1f1f'} padding={'10px'}>
+                        <MenuGroup>
                             { relayData.map(relay => <MenuItem
                                 value={relay.id}
                                 background={'none'}
@@ -230,11 +297,28 @@ const App = () => {
                                 cursor={'pointer'}
                                 className={'menu-item'}
                                 display={'flex'}
+                                p={1}
                                 justifyContent={'space-between'}
-                                mt={5}
                                 onClick={() => {HandleOptionClick('relay', relay.id)}}
-                            >{relay.name}<span className={'power-readout'}>{generateShorthandNumber(relay.power)}</span></MenuItem>) }
+                            >
+                                <span className={'relay-span'}>{relay.name}</span>
+                                <span className={'power-readout'}>{generateShorthandNumber(relay.power)}</span>
+                            </MenuItem>) }
                         </MenuGroup>
+                        <MenuDivider/>
+                        <MenuItem
+                            background={'none'}
+                            border={'none'}
+                            color={'white'}
+                            cursor={'pointer'}
+                            className={'menu-item'}
+                            display={'flex'}
+                            p={1}
+                            onClick={() => toggleRelayModal(!customRelayModalActive)}
+                        >
+                            <SmallAddIcon mr={2}/>
+                            Custom Relay
+                        </MenuItem>
                     </MenuList>
                 </Menu>
                 {
@@ -242,7 +326,14 @@ const App = () => {
                         <div style={{display: 'flex', justifyContent: 'center'}}>
                             <div className={'styled-div'}>
                                 <div className={'icon-container'}>
-                                    <img className={'icon'} src={`src/assets/relays/${relay.name}.webp`}/>
+                                    <img
+                                         className={'icon'}
+                                         src={`src/assets/relays/${relay.name}.webp`}
+                                         onError={({ currentTarget }) => {
+                                             currentTarget.onerror = null;
+                                             currentTarget.src="src/assets/nosrc.png";
+                                         }}
+                                    />
                                 </div>
                                 <p className={'component-name'}>{relay.name}<br/>
                                     <span className={'power-readout'}>{generateShorthandNumber(relay.power)}</span></p>
@@ -258,10 +349,10 @@ const App = () => {
         </div>
       </div>
         <div className={'footer'}>
-            <p>Created by<br/>Westbrooke117</p>
-            <p className={'version-text'}>v1.0</p>
+            <p>Created by<br/><a className={'info-link'} target={'_blank'} href={'https://www.reddit.com/user/Westbrooke117/'} rel="noreferrer">Westbrooke117</a></p>
+            <p className={'version-text info-link'}><a target={'_blank'} href={'https://github.com/Westbrooke117/KSPSSC'} rel={'noreferrer'}>v1.0</a></p>
         </div>
-    </>
+    </div>
   )
 }
 
