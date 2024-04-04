@@ -163,11 +163,7 @@ const App = () => {
       <div className={"main-content-container"}>
           <div className={"planet-container"} style={{backgroundImage: 'url(src/assets/kerbol_system/Kerbin.webp)', backgroundSize: 'cover'}}>
               <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}}>
-                  {
-                      distanceData.map(planet => (
-                          <option value={planet.id}>{planet.name}</option>
-                      ))
-                  }
+                  <option>Kerbin</option>
               </select>
           </div>
         <div className={"connection-container"}>
