@@ -16,6 +16,10 @@ import {
 import {DeleteIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {CustomModal} from "./components/CustomModal.jsx";
 
+//Google Analytics Integration
+import ReactGA from "react-ga4";
+ReactGA.initialize("G-JERFZ4Z5W6");
+
 const App = () => {
     const [totalPower, setTotalPower] = useState(2000000000)
 
