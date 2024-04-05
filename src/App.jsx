@@ -173,7 +173,7 @@ const App = () => {
                       minStrength !== 0 ?
                           `${minStrength}% strength at min distance`
                           :
-                          `No connection at max distance`
+                          `No connection at min distance`
                   }
               </Text>
           </Box>
