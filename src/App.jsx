@@ -161,7 +161,7 @@ const App = () => {
           </div>
       </div>
       <div className={"main-content-container"}>
-          <div className={"planet-container"} style={{backgroundImage: 'url(./public/assets/kerbol_system/kerbin.webp)', backgroundSize: 'cover'}}>
+          <div className={"planet-container"} style={{backgroundImage: 'url(assets/system/kerbin.webp)', backgroundSize: 'cover'}}>
               <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}}>
                   <option>Kerbin</option>
               </select>
@@ -186,7 +186,7 @@ const App = () => {
               }
           </Box>
         </div>
-        <div className={"planet-container"} style={{backgroundImage: `url(./public/assets/kerbol_system/${(distanceData[endingDestination].name).toLowerCase()}.webp)`, backgroundSize: 'cover'}}>
+        <div className={"planet-container"} style={{backgroundImage: `url(assets/system/${(distanceData[endingDestination].name).toLowerCase()}.webp)`, backgroundSize: 'cover'}}>
           <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}} defaultValue={3} onChange={(e) => setEndingDestination(parseInt(e.target.value))}>
             {
               distanceData.map(planet => (
@@ -254,10 +254,10 @@ const App = () => {
                               <div className={'icon-container'}>
                                   <img
                                       className={'icon'}
-                                      src={`public/assets/communotrons/${antenna.name}.webp`}
+                                      src={`assets/communotrons/${antenna.name}.webp`}
                                       onError={({ currentTarget }) => {
                                           currentTarget.onerror = null;
-                                          currentTarget.src="public/assets/nosrc.png";
+                                          currentTarget.src="assets/nosrc.png";
                                       }}
                                   />
                               </div>
@@ -328,10 +328,10 @@ const App = () => {
                                 <div className={'icon-container'}>
                                     <img
                                          className={'icon'}
-                                         src={`public/assets/relays/${relay.name}.webp`}
+                                         src={`assets/relays/${relay.name}.webp`}
                                          onError={({ currentTarget }) => {
                                              currentTarget.onerror = null;
-                                             currentTarget.src="public/assets/nosrc.png";
+                                             currentTarget.src="assets/nosrc.png";
                                          }}
                                     />
                                 </div>
