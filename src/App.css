@@ -4,7 +4,7 @@
 
 body {
     margin: 0;
-    background-image: url('src/assets/background.png') !important;
+    background-image: url('../public/assets/background.png') !important;
 }
 
 .white {

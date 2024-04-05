@@ -3,7 +3,7 @@ import {
     Modal,
     ModalBody,
     ModalContent, ModalFooter,
-    ModalOverlay, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper,
+    ModalOverlay, NumberInput, NumberInputField,
 } from "@chakra-ui/react";
 import {useState} from "react";
 
