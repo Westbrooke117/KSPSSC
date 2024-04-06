@@ -268,3 +268,8 @@ body {
 .chakra-form__required-indicator {
     color: #fc8181 !important;
 }
+
+.custom-difficulty-power {
+    color: #87FF5E;
+    font-weight: bold;
+}

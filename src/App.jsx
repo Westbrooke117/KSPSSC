@@ -4,7 +4,7 @@ import antennaData from './json/antennas.json'
 import relayData from './json/relays.json'
 import {useEffect, useState} from "react";
 import {
-    Box,
+    Box, Button,
     Menu,
     MenuButton,
     MenuDivider,
@@ -13,11 +13,12 @@ import {
     MenuList,
     Text
 } from "@chakra-ui/react";
-import {DeleteIcon, SmallAddIcon} from "@chakra-ui/icons";
+import {DeleteIcon, SettingsIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {CustomModal} from "./components/CustomModal.jsx";
 
 //Google Analytics Integration
 import ReactGA from "react-ga4";
+import {AppSettingsModal} from "./components/AppSettingsModal.jsx";
 ReactGA.initialize("G-JERFZ4Z5W6");
 
 const App = () => {
@@ -34,10 +35,14 @@ const App = () => {
 
     const [activeSignalType, setActiveSignalType] = useState('Antenna')
 
+    const [extraSettingsModalActive, toggleExtraSettingsModal] = useState(false)
     const [customAntennaModalActive, toggleAntennaModal] = useState(false)
     const [customRelayModalActive, toggleRelayModal] = useState(false)
 
     const [itemId, setItemId] = useState(0)
+
+    const [rangeModifier, setRangeModifier] = useState(1)
+    const [DSNModifier, setDSNModifier] = useState(1)
 
     useEffect(() => {
 
@@ -49,8 +54,7 @@ const App = () => {
         }
 
         const calculateSignalStrength = (distance) => {
-            console.log(antennas)
-            let x = Math.min(1 - distanceData[endingDestination][distance] / Math.round(Math.sqrt(dsnLevel * (activeSignalType === 'Relay' ? calculateTotalPower().relayTotal : calculateTotalPower().antennaTotal))), 1)
+            let x = Math.min(1 - distanceData[endingDestination][distance] / Math.round(Math.sqrt((dsnLevel * DSNModifier) * (activeSignalType === 'Relay' ? calculateTotalPower().relayTotal : calculateTotalPower().antennaTotal))), 1)
             x = Math.max(x, 0)
 
             return Math.round(((3-2 * x) * x ** 2) * 100)
@@ -59,8 +63,8 @@ const App = () => {
         setMinStrength(calculateSignalStrength('min'))
         setMaxStrength(calculateSignalStrength('max'))
 
-        setTotalPower(Math.floor(Math.sqrt(dsnLevel * (activeSignalType === 'Relay' ? calculateTotalPower().relayTotal : calculateTotalPower().antennaTotal))))
-  },[dsnLevel, antennas, relays, endingDestination, activeSignalType])
+        setTotalPower(Math.floor(Math.sqrt((dsnLevel * DSNModifier) * (activeSignalType === 'Relay' ? calculateTotalPower().relayTotal : calculateTotalPower().antennaTotal))))
+  },[dsnLevel, antennas, relays, endingDestination, activeSignalType, rangeModifier, DSNModifier])
 
     const generateShorthandNumber = (power) => {
         if (power === 0 || isNaN(power)){ return `-` }
@@ -76,8 +80,8 @@ const App = () => {
           return total + num.power
       }
 
-      let antennaTotal = antennas.reduce(calculateSum, 0)
-      let relayTotal = relays.reduce(calculateSum, 0)
+      let antennaTotal = antennas.reduce(calculateSum, 0) * rangeModifier
+      let relayTotal = relays.reduce(calculateSum, 0) * rangeModifier
 
       return {
           antennaTotal: antennaTotal,
@@ -119,6 +123,7 @@ const App = () => {
     const onClose = () => {
         toggleAntennaModal(false)
         toggleRelayModal(false)
+        toggleExtraSettingsModal(false)
     }
 
     const addCustom = (type, name, power) => {
@@ -144,6 +149,17 @@ const App = () => {
                         power: power
                     }
                 ])
+                break;
+        }
+    }
+
+    const updateModifiers = (setting, value) => {
+        switch (setting){
+            case 'rangeModifier':
+                setRangeModifier(value)
+                break;
+            case 'DSNModifier':
+                setDSNModifier(value)
                 break;
         }
     }
@@ -196,20 +212,75 @@ const App = () => {
           </select>
         </div>
       </div>
-      <div className={"centered"}>
-        <div className={"total-power"}>
-          <Text
-              p={2}
-          >Total {activeSignalType} Power: <span className={'power-readout'}>{totalPower.toLocaleString()}</span></Text>
-        </div>
-      </div>
+        <AppSettingsModal
+            isOpen={extraSettingsModalActive}
+            onClose={onClose}
+            updateModifiers={updateModifiers}
+            rangeModifierValue={rangeModifier}
+            dsnModifierValue={DSNModifier}
+        />
+        <Box className={'centered'}>
+            <Box display={'flex'} justifyContent={'space-between'} w={'1150px'} flexDirection={'row'}>
+                {/*/Dummy element below to maintain flex alignment/*/}
+                <Button
+                    display={'flex'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    w={10}
+                ></Button>
+
+                <Box className={"total-power"}><Text p={2}>Total {activeSignalType} Power: <span className={'power-readout'}>{totalPower.toLocaleString()}</span></Text></Box>
+
+                <Box
+                    className={'total-power settings-icon'}
+                    display={'flex'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    w={10}
+                >
+                    <Button onClick={() => {toggleExtraSettingsModal(true)}}>
+                        <SettingsIcon/>
+                    </Button>
+                </Box>
+            </Box>
+        </Box>
       <div className={"centered"}>
         <div className={"settings-container"}>
           <div className={"settings-column"}>
             <Text mt={3} mb={3} className={"text-centered white"}>Tracking Station Level</Text>
-            <button className={`${dsnLevel === 2000000000 ? "button-active" : "button-inactive"} styled-button-alt`} onClick={() => {setDsnLevel(2000000000)}}>Level 1<br/><span className={'power-readout'}>2.00G</span></button>
-            <button className={`${dsnLevel === 50000000000 ? "button-active" : "button-inactive"} styled-button-alt`} onClick={() => {setDsnLevel(50000000000)}}>Level 2<br/><span className={'power-readout'}>50.00G</span></button>
-            <button className={`${dsnLevel === 250000000000 ? "button-active" : "button-inactive"} styled-button-alt`} onClick={() => {setDsnLevel(250000000000)}}>Level 3<br/><span className={'power-readout'}>250.00G</span></button>
+            <button
+                className={`${dsnLevel === 2000000000 ? "button-active" : "button-inactive"} styled-button-alt`}
+                onClick={() => {setDsnLevel(2000000000)}}
+            >Level 1<br/>
+                {
+                    DSNModifier == 1 ?
+                        <span className={'power-readout'}>2.00G</span>
+                        :
+                        <span className={'power-readout'}>2.00G <span className={'custom-difficulty-power'}>({generateShorthandNumber(2000000000 * DSNModifier)})</span></span>
+                }
+            </button>
+            <button
+                className={`${dsnLevel === 50000000000 ? "button-active" : "button-inactive"} styled-button-alt`}
+                onClick={() => {setDsnLevel(50000000000)}}
+            >Level 2<br/>
+                {
+                    DSNModifier == 1 ?
+                        <span className={'power-readout'}>50.00G</span>
+                        :
+                        <span className={'power-readout'}>50.00G <span className={'custom-difficulty-power'}>({generateShorthandNumber(50000000000 * DSNModifier)})</span></span>
+                }
+            </button>
+            <button
+                className={`${dsnLevel === 250000000000 ? "button-active" : "button-inactive"} styled-button-alt`}
+                onClick={() => {setDsnLevel(250000000000)}}
+            >Level 3<br/>
+                {
+                    DSNModifier == 1 ?
+                        <span className={'power-readout'}>250.00G</span>
+                        :
+                        <span className={'power-readout'}>250.00G <span className={'custom-difficulty-power'}>({generateShorthandNumber(250000000000 * DSNModifier)})</span></span>
+                }
+            </button>
           </div>
           <div className={"settings-column"}>
             <Text mt={3} mb={3} className={"text-centered white"}>Direct Antennas</Text>
@@ -218,7 +289,8 @@ const App = () => {
                   <MenuButton className={'styled-button-alt'}>--- Select ---</MenuButton>
                   <MenuList border={'1px solid #676767'} borderRadius={10} w={'300px'} backgroundColor={'#1f1f1f'} padding={'10px'}>
                       <MenuGroup>
-                          { antennaData.map(antenna => <MenuItem
+                          { antennaData.map(antenna =>
+                              <MenuItem
                               value={antenna.id}
                               background={'none'}
                               border={'none'}
@@ -229,7 +301,12 @@ const App = () => {
                               p={1}
                               justifyContent={'space-between'}
                               onClick={() => {HandleOptionClick('antenna', antenna.id)}}
-                          >{antenna.name}<span className={'power-readout'}>{generateShorthandNumber(antenna.power)}</span></MenuItem>) }
+                              >{antenna.name}
+                                  {
+
+                                  }
+                                  <span className={'power-readout'}>{generateShorthandNumber(antenna.power)}</span>
+                              </MenuItem>) }
                       </MenuGroup>
                       <MenuDivider/>
                       <MenuItem
@@ -261,7 +338,13 @@ const App = () => {
                                       }}
                                   />
                               </div>
-                              <p className={'component-name'}>{antenna.name}<br/><span className={'power-readout'}>{generateShorthandNumber(antenna.power)}</span></p>
+                              <p className={'component-name'}>{antenna.name}<br/>
+                                  <span className={'power-readout'}>{generateShorthandNumber(antenna.power)} </span>
+                                  {
+                                      rangeModifier != 1 &&
+                                        <span className={'custom-difficulty-power'}>({generateShorthandNumber(antenna.power * rangeModifier)})</span>
+                                  }
+                              </p>
                           </div>
                           <button onClick={() => {
                               const idToRemove = antenna.id; // Extract the id for clarity
@@ -336,7 +419,12 @@ const App = () => {
                                     />
                                 </div>
                                 <p className={'component-name'}>{relay.name}<br/>
-                                    <span className={'power-readout'}>{generateShorthandNumber(relay.power)}</span></p>
+                                    <span className={'power-readout'}>{generateShorthandNumber(relay.power)} </span>
+                                    {
+                                        rangeModifier != 1 &&
+                                        <span className={'custom-difficulty-power'}>({generateShorthandNumber(relay.power * rangeModifier)})</span>
+                                    }
+                                </p>
                             </div>
                             <button onClick={() => {
                                 const idToRemove = relay.id; // Extract the id for clarity
@@ -350,7 +438,7 @@ const App = () => {
       </div>
         <div className={'footer'}>
             <p>Created by<br/><a className={'info-link'} target={'_blank'} href={'https://www.reddit.com/user/Westbrooke117/'} rel="noreferrer">Westbrooke117</a></p>
-            <p className={'version-text info-link'}><a target={'_blank'} href={'https://github.com/Westbrooke117/KSPSSC'} rel={'noreferrer'}>v1.0</a></p>
+            <p className={'version-text info-link'}><a target={'_blank'} href={'https://github.com/Westbrooke117/KSPSSC'} rel={'noreferrer'}>v1.0.1</a></p>
         </div>
     </div>
   )
