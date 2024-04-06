@@ -273,3 +273,7 @@ body {
     color: #87FF5E;
     font-weight: bold;
 }
+
+.settings-icon:hover {
+    background-color: #434343 !important;
+}

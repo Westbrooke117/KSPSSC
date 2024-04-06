@@ -227,18 +227,20 @@ const App = () => {
                     justifyContent={'center'}
                     alignItems={'center'}
                     w={10}
+                    visibility={'hidden'}
                 ></Button>
 
                 <Box className={"total-power"}><Text p={2}>Total {activeSignalType} Power: <span className={'power-readout'}>{totalPower.toLocaleString()}</span></Text></Box>
 
                 <Box
-                    className={'total-power settings-icon'}
+                    className={'total-power'}
                     display={'flex'}
                     justifyContent={'center'}
                     alignItems={'center'}
+                    borderRadius={7}
                     w={10}
                 >
-                    <Button onClick={() => {toggleExtraSettingsModal(true)}}>
+                    <Button className={'settings-icon'} color={'white'} backgroundColor={'black'} onClick={() => {toggleExtraSettingsModal(true)}}>
                         <SettingsIcon/>
                     </Button>
                 </Box>

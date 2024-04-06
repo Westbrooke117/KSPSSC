@@ -28,6 +28,7 @@ const AppSettingsModal = ({isOpen, onClose, updateModifiers, rangeModifierValue,
                 backgroundColor={'#1F1F1F'}
                 border={'1px solid #676767'}
                 borderRadius={'20px'}
+                color={'white'}
             >
                 <ModalHeader fontWeight={'normal'}>Extra Settings</ModalHeader>
                 <ModalCloseButton/>
