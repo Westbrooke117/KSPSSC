@@ -6,9 +6,9 @@ const PlanetIcon = ({name}) => {
         <>
             {
                 !moons.includes(name) ?
-                    <Image w={10} src={`assets/system/${name}.webp`} alt={name}/>
+                    <Image w={10} src={`assets/system/${name}.webp`} alt={"·"}/>
                     :
-                    <Image w={10} ml={10} src={`assets/system/${name}.webp`} alt={name}/>
+                    <Image w={10} ml={10} src={`assets/system/${name}.webp`} alt={"·"}/>
             }
         </>
     )
