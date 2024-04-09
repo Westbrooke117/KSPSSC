@@ -39,84 +39,87 @@ const AppSettingsModal = ({isOpen, onClose, updateModifiers, rangeModifierValue,
                 </Box>
                 <Divider/>
                 <ModalBody>
-                    <Box>
-                        <HStack alignItems={'center'} justifyContent={'space-between'}>
-                            <Text mb={3} mt={2} fontSize={18}>Gameplay</Text>
-                            <Button
-                                variant={'ghost'}
-                                fontWeight={'normal'}
-                                fontSize={18}
-                                onClick={() => {
-                                    updateModifiers('rangeModifier', 1)
-                                    updateModifiers('DSNModifier', 1)
-                                }}>
-                                Reset?
-                            </Button>
-                        </HStack>
-                        <HStack>
-                            <Text>Range Modifier:</Text>
-                            <Input
-                                variant={'unstyled'}
-                                type={'number'}
+                    <HStack alignItems={'baseline'} justifyContent={'space-between'}>
+                        <Text mb={2} mt={2} fontSize={18}>Gameplay</Text>
+                        <Button
+                            variant={'ghost'}
+                            fontWeight={'normal'}
+                            fontSize={18}
+                            onClick={() => {
+                                updateModifiers('rangeModifier', 1)
+                                updateModifiers('DSNModifier', 1)
+                            }}>
+                            Reset?
+                        </Button>
+                    </HStack>
+                    <Box backgroundColor={'#2B2B2B'} p={3} borderRadius={10}>
+                        <Box>
+                            <HStack>
+                                <Text>Range Modifier:</Text>
+                                <Input
+                                    variant={'unstyled'}
+                                    type={'number'}
+                                    value={rangeModifierValue}
+                                    onChange={(e) => HandleInput('rangeModifier', e.target.value)}
+                                    w={20}
+                                ></Input>
+                            </HStack>
+                            <Slider
+                                aria-label='slider-ex-1'
+                                defaultValue={1}
                                 value={rangeModifierValue}
-                                onChange={(e) => HandleInput('rangeModifier', e.target.value)}
-                                w={20}
-                            ></Input>
-                        </HStack>
-                        <Slider
-                            aria-label='slider-ex-1'
-                            defaultValue={1}
-                            value={rangeModifierValue}
-                            min={0.10}
-                            max={10}
-                            step={0.1}
-                            focusThumbOnChange={false}
-                            colorScheme={'gray'}
-                            onChange={(value) => updateModifiers('rangeModifier', value)}
-                        ><SliderTrack>
-                            <SliderFilledTrack />
-                        </SliderTrack>
-                            <SliderThumb/>
-                        </Slider>
-                    </Box>
-                    <Box>
-                        <HStack>
-                            <Text>DSN Modifier:</Text>
-                            <Input
-                                variant={'unstyled'}
+                                min={0.10}
+                                max={10}
+                                step={0.1}
+                                focusThumbOnChange={false}
+                                colorScheme={'gray'}
+                                onChange={(value) => updateModifiers('rangeModifier', value)}
+                            ><SliderTrack>
+                                <SliderFilledTrack />
+                            </SliderTrack>
+                                <SliderThumb/>
+                            </Slider>
+                        </Box>
+                        <Box>
+                            <HStack>
+                                <Text>DSN Modifier:</Text>
+                                <Input
+                                    variant={'unstyled'}
+                                    value={dsnModifierValue}
+                                    onChange={(e) => HandleInput('DSNModifier', e.target.value)}
+                                    w={20}
+                                ></Input>
+                            </HStack>
+                            <Slider
+                                aria-label='slider-ex-1'
+                                defaultValue={1}
                                 value={dsnModifierValue}
-                                onChange={(e) => HandleInput('DSNModifier', e.target.value)}
-                                w={20}
-                            ></Input>
-                        </HStack>
-                        <Slider
-                            aria-label='slider-ex-1'
-                            defaultValue={1}
-                            value={dsnModifierValue}
-                            min={0.1}
-                            max={10}
-                            step={0.1}
-                            focusThumbOnChange={false}
-                            colorScheme={'gray'}
-                            onChange={(value) => updateModifiers('DSNModifier', value)}
-                        ><SliderTrack>
-                            <SliderFilledTrack />
-                        </SliderTrack>
-                            <SliderThumb />
-                        </Slider>
+                                min={0.1}
+                                max={10}
+                                step={0.1}
+                                focusThumbOnChange={false}
+                                colorScheme={'gray'}
+                                onChange={(value) => updateModifiers('DSNModifier', value)}
+                            ><SliderTrack>
+                                <SliderFilledTrack />
+                            </SliderTrack>
+                                <SliderThumb />
+                            </Slider>
+                        </Box>
                     </Box>
-                    <Divider mt={3} mb={3}/>
-                    <Text mb={3} mt={2} fontSize={18}>Accessibility</Text>
-                    <FormControl display='flex' alignItems='center'>
-                        <FormLabel htmlFor='animation-toggle' mb='0'>
-                            Disable animations
-                        </FormLabel>
-                        <Switch
-                            isChecked={skipAnimations === true}
-                            id='animation-toggle'
-                            onChange={() => toggleSkipAnimations(!skipAnimations)}
-                        />
-                    </FormControl>
+                    <Text mb={2} mt={4} fontSize={18}>Accessibility</Text>
+                    <Box backgroundColor={'#2B2B2B'} p={3} borderRadius={10}>
+                        <FormControl display='flex' alignItems='center'>
+                            <FormLabel htmlFor='animation-toggle' mb='0'>
+                                Disable animations
+                            </FormLabel>
+                            <Switch
+                                isChecked={skipAnimations === true}
+                                id='animation-toggle'
+                                onChange={() => toggleSkipAnimations(!skipAnimations)}
+                            />
+                        </FormControl>
+                    </Box>
                 </ModalBody>
                 <ModalFooter>
                     <Button

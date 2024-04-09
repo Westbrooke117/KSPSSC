@@ -4,7 +4,7 @@ import antennaData from './json/antennas.json'
 import relayData from './json/relays.json'
 import {useEffect, useState} from "react";
 import {
-    Box, Button,
+    Box, Button, Divider,
     Menu,
     MenuButton,
     MenuDivider,
@@ -206,6 +206,7 @@ const App = () => {
                           icon={<PlanetIcon name={"Kerbin"}/>}
                           backgroundColor={'#1F1F1F'}
                           className={'planet-list-item'}
+                          h={50}
                       >
                           Kerbin
                       </MenuItem>
@@ -253,6 +254,8 @@ const App = () => {
                   border={'1px solid #676767'}
                   borderRadius={10}
                   color={'white'}
+                  pt={2}
+                  pb={0}
                 className={'planet-select'}
                 backgroundColor={'#1F1F1F'}
               >
@@ -264,11 +267,19 @@ const App = () => {
                             icon={<PlanetIcon name={planet.name}/>}
                             backgroundColor={'#1F1F1F'}
                             onClick={() => setEndingDestination(planet.id)}
+                            h={50}
                             value={planet.id}>
                             {planet.name}
                         </MenuItem>
                     ))
                 }
+                <MenuDivider mb={0}/>
+                  <MenuItem
+                      className={'planet-list-item'}
+                      h={50}
+                      backgroundColor={'#1F1F1F'}>
+                      + Custom Planet
+                  </MenuItem>
             </MenuList>
           </Menu>
         </div>
