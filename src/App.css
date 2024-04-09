@@ -223,17 +223,6 @@ body {
     border-radius: 5px;
 }
 
-.planet-select {
-    background-color: #1f1f1f;
-    color: white;
-    border: 1px solid #424242;
-    font-size: 16px;
-    border-radius: 5px;
-    text-align: center;
-    padding: 3px;
-    margin-bottom: 240px;
-}
-
 .component-name {
     white-space: nowrap;
     overflow: hidden;
@@ -276,4 +265,8 @@ body {
 
 .settings-icon:hover {
     background-color: #434343 !important;
+}
+
+.planet-list-item:hover {
+    background-color: #424242;
 }

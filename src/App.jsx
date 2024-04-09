@@ -13,12 +13,13 @@ import {
     MenuList,
     Text
 } from "@chakra-ui/react";
-import {DeleteIcon, SettingsIcon, SmallAddIcon} from "@chakra-ui/icons";
+import {ChevronDownIcon, DeleteIcon, SettingsIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {CustomModal} from "./components/CustomModal.jsx";
 
 //Google Analytics Integration
 import ReactGA from "react-ga4";
 import {AppSettingsModal} from "./components/AppSettingsModal.jsx";
+import {PlanetIcon} from "./components/PlanetIcon.jsx";
 ReactGA.initialize("G-JERFZ4Z5W6");
 
 const App = () => {
@@ -28,7 +29,7 @@ const App = () => {
     const [antennas, updateAntennas] = useState([])
     const [relays, updateRelays] = useState([])
 
-    const [endingDestination, setEndingDestination] = useState(3)
+    const [endingDestination, setEndingDestination] = useState(4)
 
     const [minStrength, setMinStrength] = useState(0)
     const [maxStrength, setMaxStrength] = useState(0)
@@ -178,9 +179,38 @@ const App = () => {
       </div>
       <div className={"main-content-container"}>
           <div className={"planet-container"} style={{backgroundImage: 'url(assets/system/kerbin.webp)', backgroundSize: 'cover'}}>
-              <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}}>
-                  <option>Kerbin</option>
-              </select>
+              <Menu
+                  defaultValue={3}
+                  flip={false}
+              >
+                  <MenuButton
+                      backgroundColor={'#1F1F1F'}
+                      pt={1}
+                      pb={1}
+                      pl={4}
+                      pr={4}
+                      borderRadius={10}
+                      mb={"250px"}
+                      border={'1px solid #676767'}
+                      color={'white'}
+                  >Kerbin<ChevronDownIcon ml={1}/></MenuButton>
+                  <MenuList
+                      color={'white'}
+                      maxHeight={'50vh'}
+                      className={'planet-select'}
+                      backgroundColor={'#1F1F1F'}
+                      border={'1px solid #676767'}
+                      overflowY={'scroll'}
+                  >
+                      <MenuItem
+                          icon={<PlanetIcon name={"Kerbin"}/>}
+                          backgroundColor={'#1F1F1F'}
+                          className={'planet-list-item'}
+                      >
+                          Kerbin
+                      </MenuItem>
+                  </MenuList>
+              </Menu>
           </div>
         <div className={"connection-container"}>
           <Box mb={25} style={{borderBottom: minStrength !== 0 ? `3px solid hsl(${minStrength}, 100%, 60%)` : `3px dotted white`, height: 25, width: 500}}>
@@ -203,13 +233,44 @@ const App = () => {
           </Box>
         </div>
         <div className={"planet-container"} style={{backgroundImage: `url(assets/system/${(distanceData[endingDestination].name).toLowerCase()}.webp)`, backgroundSize: 'cover'}}>
-          <select className={'planet-select'} style={{width: 'fit-content', height: 'fit-content'}} defaultValue={3} onChange={(e) => setEndingDestination(parseInt(e.target.value))}>
-            {
-              distanceData.map(planet => (
-                  <option value={planet.id}>{planet.name}</option>
-              ))
-            }
-          </select>
+          <Menu
+              flip={false}
+          >
+              <MenuButton
+                  backgroundColor={'#1F1F1F'}
+                  pt={1}
+                  pb={1}
+                  pl={4}
+                  pr={4}
+                  borderRadius={10}
+                  mb={"250px"}
+                  border={'1px solid #676767'}
+                  color={'white'}
+                >{distanceData[endingDestination].name}<ChevronDownIcon ml={1}/></MenuButton>
+              <MenuList
+                  overflowY={'scroll'}
+                  maxHeight={'50vh'}
+                  border={'1px solid #676767'}
+                  borderRadius={10}
+                  color={'white'}
+                className={'planet-select'}
+                backgroundColor={'#1F1F1F'}
+              >
+                {
+                    distanceData.map(planet => (
+                        <MenuItem
+                            isDisabled={planet.id === 3}
+                            className={'planet-list-item'}
+                            icon={<PlanetIcon name={planet.name}/>}
+                            backgroundColor={'#1F1F1F'}
+                            onClick={() => setEndingDestination(planet.id)}
+                            value={planet.id}>
+                            {planet.name}
+                        </MenuItem>
+                    ))
+                }
+            </MenuList>
+          </Menu>
         </div>
       </div>
         <AppSettingsModal
