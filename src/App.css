@@ -108,7 +108,6 @@ body {
 
 .settings-container {
     border: 1px solid gray;
-    width: 1150px;
     display: flex;
     padding-bottom: 10px;
     justify-content: space-around;

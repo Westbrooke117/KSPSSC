@@ -11,7 +11,8 @@ import {
     MenuGroup,
     MenuItem,
     MenuList,
-    Text
+    Text,
+    Image
 } from "@chakra-ui/react";
 import {ChevronDownIcon, DeleteIcon, SettingsIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {CustomModal} from "./components/CustomModal.jsx";
@@ -168,7 +169,7 @@ const App = () => {
   return (
     <div>
       <Box className={"title"} mt={10} mb={10}>
-        <Text style={{color: "white", fontSize: 32}}>KSP Signal Strength Calculator</Text>
+        <Text style={{color: "white", fontSize: 32}} textAlign={'center'}>KSP Signal Strength Calculator</Text>
       </Box>
       <div className={"signal-mode-selection-container"}>
           <div className={'signal-mode-wrapper'}>
@@ -177,8 +178,8 @@ const App = () => {
               <button style={{marginLeft: '10px'}} className={`signal-mode-selection ${activeSignalType === 'Relay' ? 'active-button' : ''}`} onClick={() => setActiveSignalType('Relay')}>Relay Mode</button>
           </div>
       </div>
-      <div className={"main-content-container"}>
-          <div className={"planet-container"} style={{backgroundImage: 'url(assets/system/kerbin.webp)', backgroundSize: 'cover'}}>
+      <Box className={"main-content-container"}>
+          <Box className={"planet-container"} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
               <Menu
                   defaultValue={3}
                   flip={false}
@@ -190,7 +191,6 @@ const App = () => {
                       pl={4}
                       pr={4}
                       borderRadius={10}
-                      mb={"250px"}
                       border={'1px solid #676767'}
                       color={'white'}
                   >Kerbin<ChevronDownIcon ml={1}/></MenuButton>
@@ -212,7 +212,13 @@ const App = () => {
                       </MenuItem>
                   </MenuList>
               </Menu>
-          </div>
+              <Image
+                  pb={10}
+                  w={200}
+                  minW={100}
+                  src={`assets/system/kerbin.webp`}
+              />
+          </Box>
         <div className={"connection-container"}>
           <Box mb={25} style={{borderBottom: minStrength !== 0 ? `3px solid hsl(${minStrength}, 100%, 60%)` : `3px dotted white`, height: 25, width: 500}}>
               <Text className={"text-centered white"}>
@@ -233,18 +239,16 @@ const App = () => {
               }
           </Box>
         </div>
-        <div className={"planet-container"} style={{backgroundImage: `url(assets/system/${(distanceData[endingDestination].name).toLowerCase()}.webp)`, backgroundSize: 'cover'}}>
-          <Menu
-              flip={false}
-          >
+        <Box className={"planet-container"} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
+            <Menu flip={false}>
               <MenuButton
                   backgroundColor={'#1F1F1F'}
                   pt={1}
                   pb={1}
                   pl={4}
                   pr={4}
+                  mb={2}
                   borderRadius={10}
-                  mb={"250px"}
                   border={'1px solid #676767'}
                   color={'white'}
                 >{distanceData[endingDestination].name}<ChevronDownIcon ml={1}/></MenuButton>
@@ -255,7 +259,7 @@ const App = () => {
                   borderRadius={10}
                   color={'white'}
                   pt={2}
-                  pb={0}
+                  pb={2}
                 className={'planet-select'}
                 backgroundColor={'#1F1F1F'}
               >
@@ -273,17 +277,23 @@ const App = () => {
                         </MenuItem>
                     ))
                 }
-                <MenuDivider mb={0}/>
-                  <MenuItem
-                      className={'planet-list-item'}
-                      h={50}
-                      backgroundColor={'#1F1F1F'}>
-                      + Custom Planet
-                  </MenuItem>
+                {/*<MenuDivider mb={0}/>*/}
+                {/*  <MenuItem*/}
+                {/*      className={'planet-list-item'}*/}
+                {/*      h={50}*/}
+                {/*      backgroundColor={'#1F1F1F'}>*/}
+                {/*      + Custom Planet*/}
+                {/*  </MenuItem>*/}
             </MenuList>
           </Menu>
-        </div>
-      </div>
+            <Image
+                pb={10}
+                w={200}
+                minW={100}
+                src={`assets/system/${(distanceData[endingDestination].name).toLowerCase()}.webp`}
+            />
+        </Box>
+      </Box>
         <AppSettingsModal
             isOpen={extraSettingsModalActive}
             onClose={onClose}
@@ -318,9 +328,9 @@ const App = () => {
                 </Box>
             </Box>
         </Box>
-      <div className={"centered"}>
-        <div className={"settings-container"}>
-          <div className={"settings-column"}>
+      <Box className={"centered"}>
+        <Box className={"settings-container"} maxW={1150} minW={600}>
+          <Box className={"settings-column"}>
             <Text mt={3} mb={3} className={"text-centered white"}>Tracking Station Level</Text>
             <button
                 className={`${dsnLevel === 2000000000 ? "button-active" : "button-inactive"} styled-button-alt`}
@@ -355,8 +365,8 @@ const App = () => {
                         <span className={'power-readout'}>250.00G <span className={'custom-difficulty-power'}>({generateShorthandNumber(250000000000 * DSNModifier)})</span></span>
                 }
             </button>
-          </div>
-          <div className={"settings-column"}>
+          </Box>
+          <Box className={"settings-column"}>
             <Text mt={3} mb={3} className={"text-centered white"}>Direct Antennas</Text>
               <CustomModal isOpen={customAntennaModalActive} onClose={onClose} addCustom={addCustom} toShorthand={generateShorthandNumber} signalType={'antenna'}/>
               <Menu flip={false}>
@@ -427,7 +437,7 @@ const App = () => {
                       </div>
                   )
               }
-          </div>
+          </Box>
             <div className={"settings-column"}>
                 <Text mb={3} mt={3} className={"text-centered white"}>Relays</Text>
                 <CustomModal isOpen={customRelayModalActive} onClose={onClose} addCustom={addCustom} toShorthand={generateShorthandNumber} signalType={'relay'}/>
@@ -508,8 +518,8 @@ const App = () => {
                     )
                 }
             </div>
-        </div>
-      </div>
+        </Box>
+      </Box>
         <div className={'footer'}>
             <p>Created by<br/><a className={'info-link'} target={'_blank'} href={'https://www.reddit.com/user/Westbrooke117/'} rel="noreferrer">Westbrooke117</a></p>
             <p className={'version-text info-link'}><a target={'_blank'} href={'https://github.com/Westbrooke117/KSPSSC'} rel={'noreferrer'}>v1.0.1</a></p>
