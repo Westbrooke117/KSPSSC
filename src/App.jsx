@@ -190,6 +190,7 @@ const App = () => {
                       pb={1}
                       pl={4}
                       pr={4}
+                      mb={2}
                       borderRadius={10}
                       border={'1px solid #676767'}
                       color={'white'}
