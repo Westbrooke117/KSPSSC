@@ -4,7 +4,9 @@ import antennaData from './json/antennas.json'
 import relayData from './json/relays.json'
 import {useEffect, useState} from "react";
 import {
-    Box, Button, Divider,
+    Box,
+    Button,
+    Divider,
     Menu,
     MenuButton,
     MenuDivider,
@@ -12,7 +14,16 @@ import {
     MenuItem,
     MenuList,
     Text,
-    Image
+    Image,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    ModalFooter,
+    UnorderedList,
+    ListItem, HStack
 } from "@chakra-ui/react";
 import {ChevronDownIcon, DeleteIcon, SettingsIcon, SmallAddIcon} from "@chakra-ui/icons";
 import {CustomModal} from "./components/CustomModal.jsx";
@@ -21,9 +32,16 @@ import {CustomModal} from "./components/CustomModal.jsx";
 import ReactGA from "react-ga4";
 import {AppSettingsModal} from "./components/AppSettingsModal.jsx";
 import {PlanetIcon} from "./components/PlanetIcon.jsx";
+import {MotionGlobalConfig} from "framer-motion";
 ReactGA.initialize("G-JERFZ4Z5W6");
+const currentVersion = '1.0.2'
+
+//TODO: Fix styling issue with reset button. Add local storage item for accessibility setting.
 
 const App = () => {
+    const [currentVersionCookie, setCurrentVersionCookie] = useState(localStorage.getItem('lastUsedVersion'))
+    const [versionNotesModalActive, setVersionNotesModal] = useState(localStorage.getItem('lastUsedVersion') !== currentVersion);
+
     const [totalPower, setTotalPower] = useState(2000000000)
 
     const [dsnLevel, setDsnLevel] = useState(2000000000)
@@ -43,10 +61,17 @@ const App = () => {
 
     const [itemId, setItemId] = useState(0)
 
-    const [rangeModifier, setRangeModifier] = useState(1)
-    const [DSNModifier, setDSNModifier] = useState(1)
+    const [rangeModifier, setRangeModifier] = useState(parseFloat(localStorage.getItem('rangeModifierValue')) || 1)
+    const [DSNModifier, setDSNModifier] = useState(parseFloat(localStorage.getItem('DSNModifierValue')) || 1)
+
 
     useEffect(() => {
+        MotionGlobalConfig.skipAnimations = JSON.parse(localStorage.getItem('disableAnimations')) || false
+
+        if (rangeModifier || DSNModifier !== 1) {
+            localStorage.setItem("DSNModifierValue", DSNModifier.toString())
+            localStorage.setItem("rangeModifierValue", rangeModifier.toString())
+        }
 
         if (antennas.length === 0 && relays.length > 0){
             setActiveSignalType('Relay')
@@ -155,6 +180,11 @@ const App = () => {
         }
     }
 
+    const closeVersionModal = () => {
+        localStorage.setItem('lastUsedVersion', currentVersion)
+        setVersionNotesModal(false)
+    }
+
     const updateModifiers = (setting, value) => {
         switch (setting){
             case 'rangeModifier':
@@ -168,14 +198,62 @@ const App = () => {
 
   return (
     <div>
+        {
+            <Modal isOpen={versionNotesModalActive} onClose={closeVersionModal}>
+                <ModalOverlay />
+                <ModalContent
+                    backgroundColor={'#1F1F1F'}
+                    border={'1px solid #676767'}
+                    borderRadius={'20px'}
+                >
+                    <ModalHeader color={'white'}>
+                        <HStack alignItems={'center'}>
+                            <Text>Minor Update v{currentVersion}</Text>
+                            <Box borderRadius={'full'}>
+                                <Image
+                                    ml={3}
+                                    w={12}
+                                    src={'https://img.icons8.com/m_rounded/512/FFFFFF/github.png'}
+                                    cursor={'pointer'}
+                                    title={'View on GitHub'}
+                                    onClick={() => window.open('https://github.com/Westbrooke117/KSPSSC', '_blank')}
+                                />
+                            </Box>
+                        </HStack>
+                    </ModalHeader>
+                    <ModalCloseButton color={'white'}/>
+                    <ModalBody>
+                        <Text color={'white'} mb={3}>What's new?</Text>
+                        <UnorderedList color={'white'}>
+                            <ListItem >The browser will now remember modifier and accessibility settings between sessions</ListItem>
+                            <ListItem>Fixed a styling bug which made it hard to see the reset button on the settings page</ListItem>
+                            <ListItem>Added this popup for updates</ListItem>
+                        </UnorderedList>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button
+                            className="modal-close-button"
+                            color={'white'}
+                            fontWeight={'normal'}
+                            backgroundColor={'#9F2C2C'}
+                            border={'1px solid #D76F6F'}
+                            onClick={() => {
+                                closeVersionModal()
+                            }}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        }
       <Box className={"title"} mt={10} mb={10}>
         <Text style={{color: "white", fontSize: 32}} textAlign={'center'}>KSP Signal Strength Calculator</Text>
       </Box>
       <div className={"signal-mode-selection-container"}>
           <div className={'signal-mode-wrapper'}>
-              <button style={{marginRight: '10px'}} className={`signal-mode-selection ${activeSignalType === 'Antenna' ? 'active-button' : ''}`} onClick={() => setActiveSignalType('Antenna')}>Antenna Mode</button>
+              <button style={{marginRight: '10px'}} className={`signal-mode-selection ${activeSignalType === 'Antenna' ? 'active-button' : ''}`} onClick={() => setActiveSignalType('Antenna')}>Antenna Power</button>
               <div className={'vertical-divider'}></div>
-              <button style={{marginLeft: '10px'}} className={`signal-mode-selection ${activeSignalType === 'Relay' ? 'active-button' : ''}`} onClick={() => setActiveSignalType('Relay')}>Relay Mode</button>
+              <button style={{marginLeft: '10px'}} className={`signal-mode-selection ${activeSignalType === 'Relay' ? 'active-button' : ''}`} onClick={() => setActiveSignalType('Relay')}>Relay Power</button>
           </div>
       </div>
       <Box className={"main-content-container"}>
@@ -278,13 +356,6 @@ const App = () => {
                         </MenuItem>
                     ))
                 }
-                {/*<MenuDivider mb={0}/>*/}
-                {/*  <MenuItem*/}
-                {/*      className={'planet-list-item'}*/}
-                {/*      h={50}*/}
-                {/*      backgroundColor={'#1F1F1F'}>*/}
-                {/*      + Custom Planet*/}
-                {/*  </MenuItem>*/}
             </MenuList>
           </Menu>
             <Image
@@ -522,8 +593,9 @@ const App = () => {
         </Box>
       </Box>
         <div className={'footer'}>
-            <p>Created by<br/><a className={'info-link'} target={'_blank'} href={'https://www.reddit.com/user/Westbrooke117/'} rel="noreferrer">Westbrooke117</a></p>
-            <p className={'version-text info-link'}><a target={'_blank'} href={'https://github.com/Westbrooke117/KSPSSC'} rel={'noreferrer'}>v1.0.1</a></p>
+            <Box cursor={'pointer'} onClick={() => setVersionNotesModal(true)}>
+                <Text className={'version-text info-link'}>v{currentVersion}</Text>
+            </Box>
         </div>
     </div>
   )

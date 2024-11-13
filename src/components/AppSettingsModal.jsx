@@ -16,7 +16,7 @@ const AppSettingsModal = ({isOpen, onClose, updateModifiers, rangeModifierValue,
         updateModifiers(setting, value)
     }
 
-    const [skipAnimations, toggleSkipAnimations] = useState(false)
+    const [skipAnimations, toggleSkipAnimations] = useState(JSON.parse(localStorage.getItem('disableAnimations')))
     MotionGlobalConfig.skipAnimations = skipAnimations
 
     return (
@@ -42,12 +42,16 @@ const AppSettingsModal = ({isOpen, onClose, updateModifiers, rangeModifierValue,
                     <HStack alignItems={'baseline'} justifyContent={'space-between'}>
                         <Text mb={2} mt={2} fontSize={18}>Gameplay</Text>
                         <Button
-                            variant={'ghost'}
+                            variant={'unstyled'}
                             fontWeight={'normal'}
                             fontSize={18}
+                            color={'white'}
                             onClick={() => {
                                 updateModifiers('rangeModifier', 1)
+                                localStorage.setItem('rangeModifierValue', "1")
+
                                 updateModifiers('DSNModifier', 1)
+                                localStorage.setItem('DSNModifierValue', "1")
                             }}>
                             Reset?
                         </Button>
@@ -116,7 +120,10 @@ const AppSettingsModal = ({isOpen, onClose, updateModifiers, rangeModifierValue,
                             <Switch
                                 isChecked={skipAnimations === true}
                                 id='animation-toggle'
-                                onChange={() => toggleSkipAnimations(!skipAnimations)}
+                                onChange={() => {
+                                    localStorage.setItem('disableAnimations', JSON.stringify(!skipAnimations))
+                                    toggleSkipAnimations(!skipAnimations)
+                                }}
                             />
                         </FormControl>
                     </Box>
