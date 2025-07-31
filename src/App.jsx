@@ -34,7 +34,7 @@ import {AppSettingsModal} from "./components/AppSettingsModal.jsx";
 import {PlanetIcon} from "./components/PlanetIcon.jsx";
 import {MotionGlobalConfig} from "framer-motion";
 ReactGA.initialize("G-JERFZ4Z5W6");
-const currentVersion = '1.0.2'
+const currentVersion = '1.0.3'
 
 //TODO: Fix styling issue with reset button. Add local storage item for accessibility setting.
 
@@ -42,6 +42,7 @@ const App = () => {
     const [currentVersionCookie, setCurrentVersionCookie] = useState(localStorage.getItem('lastUsedVersion'))
     const [versionNotesModalActive, setVersionNotesModal] = useState(localStorage.getItem('lastUsedVersion') !== currentVersion);
 
+    // State hell below
     const [totalPower, setTotalPower] = useState(2000000000)
 
     const [dsnLevel, setDsnLevel] = useState(2000000000)
@@ -99,7 +100,7 @@ const App = () => {
         if (power < 1000000){ return `${(power/1000).toFixed(2)}k` }              //A Thousand
         if (power < 1000000000){ return `${(power/1000000).toFixed(2)}M` }        //A Million
         if (power < 1000000000000){ return `${(power/1000000000).toFixed(2)}G` }  //A Billion
-        else { return `${(power/1000000000000).toFixed(2)}T` }                    //A Trillion and over
+        else { return `${(power/1000000000000).toFixed(2)}T` }                    //A Trillion
     }
 
     const calculateTotalPower = () => {
@@ -225,9 +226,7 @@ const App = () => {
                     <ModalBody>
                         <Text color={'white'} mb={3}>What's new?</Text>
                         <UnorderedList color={'white'}>
-                            <ListItem >The browser will now remember modifier and accessibility settings between sessions</ListItem>
-                            <ListItem>Fixed a styling bug which made it hard to see the reset button on the settings page</ListItem>
-                            <ListItem>Added this popup for updates</ListItem>
+                            <ListItem >Added support for destinations from OPM (Outer Planets Mod)</ListItem>
                         </UnorderedList>
                     </ModalBody>
                     <ModalFooter>
@@ -330,7 +329,8 @@ const App = () => {
                   borderRadius={10}
                   border={'1px solid #676767'}
                   color={'white'}
-                >{distanceData[endingDestination].name}<ChevronDownIcon ml={1}/></MenuButton>
+                >{distanceData[endingDestination].name}<ChevronDownIcon ml={1}/>
+              </MenuButton>
               <MenuList
                   overflowY={'scroll'}
                   maxHeight={'50vh'}
@@ -340,29 +340,46 @@ const App = () => {
                   pt={2}
                   pb={2}
                 className={'planet-select'}
-                backgroundColor={'#1F1F1F'}
-              >
-                {
-                    distanceData.map(planet => (
-                        <MenuItem
-                            isDisabled={planet.id === 3}
-                            className={'planet-list-item'}
-                            icon={<PlanetIcon name={planet.name}/>}
-                            backgroundColor={'#1F1F1F'}
-                            onClick={() => setEndingDestination(planet.id)}
-                            h={50}
-                            value={planet.id}>
-                            {planet.name}
-                        </MenuItem>
-                    ))
-                }
+                backgroundColor={'#1F1F1F'}>
+                  <MenuGroup title={'Stock'}>
+                      {
+                          distanceData.slice(0,16).map(planet => (
+                              <MenuItem
+                                  isDisabled={planet.id === 3}
+                                  className={'planet-list-item'}
+                                  icon={<PlanetIcon name={planet.name} stock={true}/>}
+                                  backgroundColor={'#1F1F1F'}
+                                  onClick={() => setEndingDestination(planet.id)}
+                                  h={50}
+                                  value={planet.id}>
+                                  {planet.name}
+                              </MenuItem>
+                          ))
+                      }
+                  </MenuGroup>
+                  <MenuGroup title={'Outer Planets Mod'}>
+                      {
+                          distanceData.slice(16).map(planet => (
+                              <MenuItem
+                                  isDisabled={planet.id === 3}
+                                  className={'planet-list-item'}
+                                  icon={<PlanetIcon name={planet.name} stock={false}/>}
+                                  backgroundColor={'#1F1F1F'}
+                                  onClick={() => setEndingDestination(planet.id)}
+                                  h={50}
+                                  value={planet.id}>
+                                  {planet.name}
+                              </MenuItem>
+                          ))
+                      }
+                  </MenuGroup>
             </MenuList>
           </Menu>
             <Image
                 pb={10}
                 w={200}
                 minW={100}
-                src={`assets/system/${(distanceData[endingDestination].name).toLowerCase()}.webp`}
+                src={distanceData[endingDestination].stock === undefined ? `assets/system/${(distanceData[endingDestination].name).toLowerCase()}.webp` : "assets/system/placeholder.png"}
             />
         </Box>
       </Box>

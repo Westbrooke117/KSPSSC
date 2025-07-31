@@ -94,5 +94,117 @@
       "name": "Eeloo",
       "min": 53183306389,
       "max": 127081753657
+    },
+    {
+      "id": 16,
+      "name": "Sarnus",
+      "min": 105481041293,
+      "max": 146116001357,
+      "stock": false
+    },
+    {
+      "id": 17,
+      "name": "Hale",
+      "min": 105481041293,
+      "max": 146126489588,
+      "stock": false
+    },
+    {
+      "id": 18,
+      "name": "Ovok",
+      "min": 105481041293,
+      "max": 146128292464,
+      "stock": false
+    },
+    {
+      "id": 19,
+      "name": "Eeloo (OPM)",
+      "min": 105481041293,
+      "max": 146135172295,
+      "stock": false
+    },
+    {
+      "id": 20,
+      "name": "Slate",
+      "min": 105481041293,
+      "max": 146160298021,
+      "stock": false
+    },
+    {
+      "id": 21,
+      "name": "Tekto",
+      "min": 105481041293,
+      "max": 146216082610,
+      "stock": false
+    },
+    {
+      "id": 22,
+      "name": "Urlum",
+      "min": 229218312140,
+      "max": 279415712909,
+      "stock": false
+    },
+    {
+      "id": 23,
+      "name": "Polta",
+      "min": 229218312140,
+      "max": 279427458396,
+      "stock": false
+    },
+    {
+      "id": 24,
+      "name": "Priax",
+      "min": 229218312140,
+      "max": 279427458396,
+      "stock": false
+    },
+    {
+      "id": 25,
+      "name": "Wal",
+      "min": 229218312140,
+      "max": 279484820311,
+      "stock": false
+    },
+    {
+      "id": 26,
+      "name": "Tal",
+      "min": 229218312140,
+      "max": 279487929474,
+      "stock": false
+    },
+    {
+      "id": 27,
+      "name": "Neidon",
+      "min": 390533330076,
+      "max": 428177051986,
+      "stock": false
+    },
+    {
+      "id": 28,
+      "name": "Thatmo",
+      "min": 390533330076,
+      "max": 428209366770,
+      "stock": false
+    },
+    {
+      "id": 29,
+      "name": "Nissee",
+      "min": 390533330076,
+      "max": 429015970830,
+      "stock": false
+    },
+    {
+      "id": 30,
+      "name": "Plock",
+      "min": 382964603173,
+      "max": 688705350475,
+      "stock": false
+    },
+    {
+      "id": 31,
+      "name": "Karen",
+      "min": 382964603173,
+      "max": 688707808275,
+      "stock": false
     }
   ]
